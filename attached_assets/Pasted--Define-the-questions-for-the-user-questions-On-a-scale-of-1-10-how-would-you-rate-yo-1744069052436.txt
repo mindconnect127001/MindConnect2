@@ -1,0 +1,88 @@
+# Define the questions for the user
+$questions = @(
+    "On a scale of 1 - 10, how would you rate your overall mood today?",
+    "On a scale of 1 - 10, how often do you feel anxious?",
+    "On a scale of 1 - 10, how would you rate your ability to sleep?",
+    "On a scale of 1 - 10, how often do you feel stressed?",
+    "On a scale of 1 - 10, how well do you handle difficult situations?",
+    "On a scale of 1 - 10, how often do you feel overwhelmed?",
+    "On a scale of 1 - 10, how often do you experience sadness?",
+    "On a scale of 1 - 10, how connected do you feel to others?",
+    "On a scale of 1 - 10, how often do you have negative thoughts?",
+    "On a scale of 1 - 10, how hopeful do you feel about the future?",
+    "On a scale of 1 - 10, how satisfied are you with your current life situation?",
+    "On a scale of 1 - 10, how motivated do you feel?",
+    "On a scale of 1 - 10, how often do you experience feelings of loneliness?",
+    "On a scale of 1 - 10, how often do you feel physically drained?",
+    "On a scale of 1 - 10, how often do you find it hard to focus?",
+    "On a scale of 1 - 10, how easily do you get irritated?",
+    "On a scale of 1 - 10, how much do you enjoy your hobbies or activities?",
+    "On a scale of 1 - 10, how much support do you feel you have from loved ones?",
+    "On a scale of 1 - 10, how often do you feel a sense of accomplishment?",
+    "On a scale of 1 - 10, how would you rate your self-esteem?"
+)
+
+# Initialize sum to 0
+$totalScore = 0
+
+# Function to clear the answer line and overwrite the previous answer (DOES NOT FUNCTION THAT WAY)
+function Clear-AnswerLine {
+    Write-Host "`r"  # This clears the current line by moving to the beginning
+}
+
+# Provides the instructions at the start
+Write-Host "1 is negative, 10 is positive,"
+# Loop through each question
+foreach ($question in $questions) {
+    $validInput = $false
+    while (-not $validInput) {
+        # Display the question and wait for the user input
+        Write-Host "$question"
+        $response = Read-Host
+
+        # Check if the response is a valid number between 1 and 10
+        if ($response -match '^[1-9]$' -or $response -eq '10') {
+            # Add the response to the total score
+            $totalScore += [int]$response
+            Clear-AnswerLine  # Clear the last answer line after a valid input
+            $validInput = $true
+        } else {
+            # Invalid input, restarts the question with a space
+            Clear-AnswerLine
+            Write-Host "Please answer with a number between 1 and 10."
+        }
+    }
+}
+
+# Display the total score
+Write-Host "`r`nYour total score is: $totalScore"
+
+# Define the URLs for both low and high total scores
+$lowScoreUrls = @(
+    "https://youtube.com/playlist?list=PLRI0KIcoBQD2McOA02BjBF-704IxfueTL&si=hdLMEUJbPClKF5Rz",
+    "https://youtube.com/playlist?list=PLnOWExhobJ6fEjbZj5zVQKUOFLfhFU3wH&si=GskVQ80aLKRYgqwS",
+    "https://youtube.com/playlist?list=PLN_YZjgdIDCfYxxFZW4TFKiFNraH6d9hK&si=5ZUnIItJNFYQjnx4",
+    "https://youtube.com/playlist?list=PLfL43GbquizsDXKxrhE2m8xZLbh3cpvNr&si=ceSO2DGJlk9B1le8"
+)
+
+$highScoreUrls = @(
+    "https://youtu.be/pV_76Nc1Ue8?si=A_8kI1cGfqaXDPNz",
+    "https://youtube.com/playlist?list=PLvsYXqtYjMYfa2_AIyPdd-4IN10XKr3aU&si=pu7_qFZ7YRJv6ZHe",
+    "https://youtube.com/playlist?list=PLDF9C9C5E66E6F081&si=vv16WFPFwbZ2Z52f",
+    "https://youtu.be/K0KYL0LqZYc?si=6Ku9bK2XUN0bluKl"
+)
+
+# Determine which array of URLs to choose from based on the total score and pick a random URL
+if ($totalScore -le 100) {
+    $url = Get-Random -InputObject $lowScoreUrls
+} else {
+    $url = Get-Random -InputObject $highScoreUrls
+}
+
+# Display the selected URL
+Write-Host "You may find helpful resources here: $url"
+Write-Host "Press Enter to open the link and close this window"
+Read-Host
+
+# Open the selected URL
+Start-Process $url
